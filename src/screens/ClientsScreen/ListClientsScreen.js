@@ -24,6 +24,7 @@ const colores = {
 }
 
 type Props = {};
+//Muestra todos los clientes registrados en la base de datos del usuario
 export default class ListClientsScreen extends Component<Props> {
   constructor(props){
     super(props);
@@ -31,12 +32,18 @@ export default class ListClientsScreen extends Component<Props> {
       refresh: this.props.refresh,
     }
   }
+
+  //Actualiza la información mostrada en pantalla
+  componentWillReceiveProps() {
+    this.startRefresh()
+  }
+  //Vuelve a llamar a la lista para refrescarla
   startRefresh() {
     if(this.state.refresh){
-      return(<ClientsList type={'address'}/>);
+      return(<ClientsList showTotal={false} type={'address'}/>);
       this.setState({refresh: false})
     }else{
-      return(<ClientsList type={'address'}/>);
+      return(<ClientsList showTotal={false} type={'address'}/>);
       this.setState({refresh: false})
     }
   }

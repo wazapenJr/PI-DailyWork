@@ -3,15 +3,18 @@ import { Constants } from 'expo';
 import { Text, View, Image, TouchableOpacity, Modal, StyleSheet, Button, TouchableHighlight } from 'react-native';
 import ContentModal from './ContentModal';
 import SearchInput from './SearchInput';
+import { getUser } from '../screens/SignInScreen';
 
+//Es el componente que se muestra en la parte superior que nos permite acceder al modal de nuestro usuario y diferentes funciones
 class Header extends Component {
 	constructor(props){
 	  super(props);
 	  this.state = {
 	    modalVisible: false, //Muestra o no el modal lateral del usuario
-	    profilePhoto: require('../assets/images/yo.png'), //Guarda la foto del usuario
-	    profileName: 'Brian', //Guarda el primer nombre del usuario
-	    fullProfileName: 'Brian Nájera Cortés' //Guarda el nombre completo del usuario
+	    profilePhoto: getUser().photo, //Guarda la foto del usuario
+	    fullProfileName: getUser().name, //Guarda el nombre completo del usuario
+	    email: getUser().email,
+	    pwd: getUser().password
 	  }
 
 	  //Combina el método showModal() de este componente con el de su hijo para que su hijo también controle el comportamiento
@@ -39,7 +42,7 @@ class Header extends Component {
 		        		{/* Apartir de aquí en el View con estilo containerModal es el contenido */}
 		        		<View style={styles.containerModal}>
 		        			{/* Componente que organiza el contenido recibiendo ciertos datos necesarios */}
-			        		<ContentModal photo={this.state.profilePhoto} header={'noback'} showModal={this.showModal} profileName={this.state.profileName} fullName={this.state.fullProfileName}/>
+			        		<ContentModal id={1} username={'hola'} photo={this.state.profilePhoto} header={'noback'} showModal={this.showModal} profileName={this.state.profileName} fullName={this.state.fullProfileName} email={this.state.email} pwd={this.state.pwd} />
     		        		<View style={[styles.containerCloseModal, {position: 'absolute', top: 0, left:0, right:0}]}>
     			        		<TouchableOpacity
     			        			onPress={() => {
@@ -62,7 +65,10 @@ class Header extends Component {
 				    resizeMode='contain'
 				  />
 				</TouchableOpacity>
-				<SearchInput placeHolderText={'Search'}/>
+				<View style={[styles.buttonContainer, {borderColor: colores.rosa.color, borderTopWidth: 0, borderBottomWidth: 0}]}> 
+				  <Text style={[styles.buttonText, {color: colores.rosa.color}]}>¡Ten un buen día! :D</Text>
+				</View>
+				{/*<SearchInput placeHolderText={'Search'}/>*/}
 			</View>
 		);
 	}
@@ -91,11 +97,11 @@ const styles = StyleSheet.create({
 	viewStyle:{
 		backgroundColor: 'rgba(255, 255, 255, 1)',
 		height: 47+Constants.statusBarHeight,
-		justifyContent: 'space-around',
+		justifyContent: 'space-between',
 		alignItems: 'center',
 		paddingTop: Constants.statusBarHeight,
 		paddingLeft: 10,
-		paddingRight: 8,
+		paddingRight: 15,
 		flexDirection: 'row',
 		borderBottomWidth: 1,
 		borderBottomColor: colores.gris.color,
@@ -139,7 +145,20 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderColor: colores.rosa.color,
 		alignItems: 'center',
-	}
+	},
+	buttonContainer: {
+	  borderRadius: 50,
+	  borderWidth: 2,
+	  paddingLeft: 30,
+	  paddingRight: 30,
+	  paddingTop: 5,
+	  paddingBottom: 5,
+	},
+	buttonText: {
+	  fontSize: 20,
+	  color: 'black',
+	  textAlign: 'center',
+	},
 });
 
 export default Header;

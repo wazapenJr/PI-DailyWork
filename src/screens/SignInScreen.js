@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Image, Text, TextInput, KeyboardAvoidingView, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, Text, TextInput, KeyboardAvoidingView, Alert, View, TouchableOpacity } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
 const colores = {
@@ -54,12 +54,15 @@ export default class SignInScreen extends Component<Props> {
       })
     }).then((response) => response.json())
       .then((responseJson) => {
-        userLog = responseJson;
-        console.log('Iniciaste :D ' + userLog[0].name)
-        Actions.Home();
-
+        if(responseJson == "error"){
+          Alert.alert('Usuario/contraseña no valido');  
+        }else{
+          userLog = responseJson;
+          console.log('Iniciaste :D ' + userLog[0].name)
+          Actions.Home();
+        }
       }).catch((error) => {
-        console.error(error);
+        Alert.alert('Error al iniciar seisón');
       });
   }
 
@@ -96,7 +99,7 @@ export default class SignInScreen extends Component<Props> {
           onSubmitEditing={this.ingresar}
         />
         <TouchableOpacity style={[styles.button, {borderColor: colores.rosa.color}]} onPress={this.ingresar}> 
-          <Text style={[styles.buttonText, {color: colores.rosa.color}]}>Sign in</Text> 
+          <Text style={[styles.buttonText, {color: colores.rosa.color}]}>Entrar</Text> 
         </TouchableOpacity>
       </KeyboardAvoidingView>
     );

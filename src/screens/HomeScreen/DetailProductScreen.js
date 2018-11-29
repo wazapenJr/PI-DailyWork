@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Constants, LinearGradient } from 'expo';
 import { Text, ScrollView, View, Image, TouchableOpacity, StyleSheet } from 'react-native';
-
+import {Actions} from 'react-native-router-flux';
 
 const colores = {
   azul: {
@@ -55,6 +55,46 @@ export default class DetailProductScreen extends Component<Props> {
               <Text style={styles.title}>Descripción:</Text>
               <Text style={[styles.title, {color: colores.gris.color,}]}>{this.props.description}</Text>
             </View>
+          </View>
+          <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}} >
+            <TouchableOpacity
+              onPress={() => {Actions.EditProduct(
+                {
+                  id_producto: `${this.props.id_product}`,
+                  nameProduct: `${this.props.product}`,
+                  description: `${this.props.description}`,
+                  price: `${this.props.price}`,
+                  category: `${this.props.category}`,
+                  photo: `${this.props.photo}`,
+                }
+              )}}
+              style={styles.containerButton}
+            >
+              <Image
+                style={styles.button}
+                source={require('../../assets/icons/edit.png')}
+                resizeMode='contain'
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {Actions.EditProduct(
+                {
+                  id_producto: `${this.props.id_producto}`,
+                  nameProduct: `${this.props.product}`,
+                  description: `${this.props.description}`,
+                  price: `${this.props.price}`,
+                  category: `${this.props.category}`,
+                  photo: `${this.props.photo}`,
+                }
+              )}}
+              style={styles.containerButton}
+            >
+              <Image
+                style={styles.button}
+                source={require('../../assets/icons/delete.png')}
+                resizeMode='contain'
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -112,5 +152,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderTopRightRadius: borderRadius,
     borderTopLeftRadius: borderRadius,
-  }
+  },
+  containerButton:{
+    marginBottom: 15,
+    marginRight: 15,
+  },
+  button: {
+    width: 30,
+    height: 30,
+  },
 });

@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { Constants } from 'expo';
-import { Text, FlatList, ListView, View, Image, TouchableOpacity, Alert, Modal, StyleSheet } from 'react-native';
+import { Text, KeyboardAvoidingView, TextInput, FlatList, ListView, View, Image, TouchableOpacity, Alert, Modal, StyleSheet } from 'react-native';
+import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
 import ReviewClient from './ReviewClient';
 import ClientModal from './ClientModal';
 import {Actions} from 'react-native-router-flux';
 import { getUser } from '../screens/SignInScreen';
 
-var showTotal = false;
 var servidor ='angel140496.ddns.net';
 var modalClient = {"id":"2","name":"Angel Torres","address":"Degollado # 70 Comala,Col","phone":"312-111-68-38","email":"jtorres24@ucol.mx","deuda":"2300.00","abono":"1000.00","photo":"http://angel140496.ddns.net/Pulgas/images/Andrea.jpeg","history":[{"id_history":"3","name_history":"Lenovo","price":"999","paid":"0","photo_history":"http://angel140496.ddns.net/Pulgas/images/Andrea.jpeg","email_user":"jtorres24@ucol.mx"},{"id_history":"4","name_history":"hola","price":"230","paid":"0","photo_history":"http://angel140496.ddns.net/Pulgas/images/chest.png","email_user":"jtorres24@ucol.mx"}]};
+//Este componente regresa la lista completa de clientes obtenida de la base de datos y la muestra con el diseño del componente ReviewClient
 class ClientsList extends Component {
 	constructor(props){
 	  super(props);
@@ -18,7 +19,7 @@ class ClientsList extends Component {
         {"id":"2","name":"Angel Torres","address":"Degollado # 70 Comala,Col","phone":"312-111-68-38","email":"jtorres24@ucol.mx","deuda":"2300.00","abono":"1000.00","photo":"http://angel140496.ddns.net/Pulgas/images/Andrea.jpeg","history":[{"id_history":"3","name_history":"Lenovo","price":"999","paid":"1","photo_history":"http://angel140496.ddns.net/Pulgas/images/Andrea.jpeg","email_user":"jtorres24@ucol.mx"},{"id_history":"4","name_history":"hola","price":"230","paid":"0","photo_history":"http://angel140496.ddns.net/Pulgas/images/chest.png","email_user":"jtorres24@ucol.mx"}]}
       ]*/, //Guarda la lista de clientes completa sin su historial por primera vez, después se actualiza
   		dataSourceHistory: '', //Guarda todos los historiales de los clientes
-
+      fullClients: '',
   		showTotal: false, //En teoría no hace nada
   		modalVisible: false, //Valor usado para mostrar el modal de los clientes o no
   		modalPhoto: null, //De aquí en adelante aon los datos mostrados en el modal
@@ -38,18 +39,18 @@ class ClientsList extends Component {
 
     var pagosPendientes = item.history.length;
     console.log('Al fin: ' + pagosPendientes)
-    for(var i = 0; i < item.history.length; i++){
+    for(var i = 0; i < item.history.length; i++){ //Resta los productos pagados para disminuir la cantidad de productos adeudados
       if(item.history[i].paid == 1)
         pagosPendientes--;
     }
-    item.deuda = pagosPendientes;
+    item.deuda = pagosPendientes; //La deuda del cliente se actualiza con el resultado final de los clientes 
     modalClient = item;
 
     var showNonPaid = [];
     if(modalClient.deuda == 0)
       modalClient.history = null
     else{
-      for(var x = 0; x < modalClient.history.length; x++){
+      for(var x = 0; x < modalClient.history.length; x++){ //Agrega a cada cliente en su atributo history su historial de compras correspondiente
         if(modalClient.history[x].paid == 0)
           showNonPaid.push(modalClient.history[x]);
       }
@@ -62,13 +63,14 @@ class ClientsList extends Component {
 	handlePress(item){
 	  	Actions.DetailClient(
 		  	{
+          id: item.id,
 		  		nameClient: item.name,
 		  		photo: item.photo,
 		  		deuda: item.deuda,
 		  		address: item.address,
 		  		email: item.email,
 		  		phone: item.phone,
-		  		history: item.history
+		  		history: item.history[0]
 		  	}
 	  	)
 	}
@@ -76,18 +78,36 @@ class ClientsList extends Component {
   /*Se encarga de filtrar la información recibida ya sea por mes, semana o día.
    *Al mismo tiempo agrega el historial de cada cliente y regresa los clientes que se mostrarán  
   */
-  filter(){
-      var clientes = [];
-      var clients = this.state.dataSource;
-      
-      for(var i = 0; i < clients.length; i++){
-        clientes.push(
-          clients[i]
-        );
-      }
-      return clientes;
+  filter() {
+      console.log(clients)
+      return clients;
   }
 
+  //Actualiza el state FullClientes con la lista de clientes completa con su historial correspondiente para cada uno
+  getFullClients(clients, history){
+    var clientes = [];
+    clientes.push(clients);
+    var historial = [];
+    var obj = {};
+    for (var i = 0; i < clientes.length; i++) {
+      clientes[i].history = []
+    }
+    
+      obj["id_history"] = history[0].id_history
+      obj["name_history"] = history[0].name_history
+      obj["price"] = history[0].price
+      obj["paid"] = history[0].paid
+      obj["photo_history"] = history[0].photo_history
+      obj["email_user"] = history[0].email_user
+      historial.push(obj);
+      clientes[0].history.push(historial[0])
+    
+    
+    console.log('Clientes salvajes: ' + clientes[0].history[0].name_history);
+    this.setState({fullClients: clientes[0]})
+  }
+
+  //Obtiene los clientes y el historial de todos los clientes en la base de datos
   insertaraBaseDeDatos() {
     fetch('http://' + `${servidor}` + '/Pulgas/pulgasBackEnd/GET_client.php',
     {
@@ -102,8 +122,8 @@ class ClientsList extends Component {
       })
     }).then((response) => response.json())
       .then((responseJson) => {
-        this.setState({dataSource: responseJson[0], isLoading: false, refresh: false});
-        console.log('Obtuviste los clientes de: ' + getUser().name)
+        this.setState({dataSource: JSON.parse(responseJson[0]), dataSourceHistory: JSON.parse(responseJson[1]), isLoading: false, refresh: false});
+        this.getFullClients(this.state.dataSource, this.state.dataSourceHistory);
       }).catch((error) => {
         console.error(error);
       });
@@ -114,10 +134,11 @@ class ClientsList extends Component {
       this.insertaraBaseDeDatos();
   }
 
-  //Muestra o no el total de la deuda total de los clientes
-	setShowTotal(show){
-		showTotal = show;
-	}
+  //Sirve para actualizar la pantalla
+  componentWillReceiveProps() {
+    this.insertaraBaseDeDatos();
+  }
+
 
   //Elige el tipo de vista previa que tendrá la lista de clietnes dependiendo en qué pantalla se mostrará
 	choseType(item){
@@ -131,7 +152,6 @@ class ClientsList extends Component {
 		          		<ReviewClient foto = {item.photo} name={item.name} subtitle={item.address} arrow={'>'}/>
 		          	</TouchableOpacity>
 				);
-				this.setShowTotal(false);
 				break;
 			case 'monto':
 				return(	
@@ -141,7 +161,6 @@ class ClientsList extends Component {
 		          		<ReviewClient foto = {item.photo} name={item.name} subtitle={'Monto a pagar:'} price={`$${item.deuda}`}/>
 		          	</TouchableOpacity>
 				);
-				this.setShowTotal(true);
 				break;
 			case 'total':
 				return(	
@@ -151,42 +170,12 @@ class ClientsList extends Component {
 		          		<ReviewClient foto = {item.photo} name={item.name} subtitle={'Total a pagar:'} price={`$${item.deuda}`}/>
 		          	</TouchableOpacity>
 				);
-				this.setShowTotal(true);
 				break;
 		}
 	}
 
-  //No hace nada por el momento
-	search(){
-		var data;	
-		switch(this.props.type){
-			case 'address':
-				data = this.state.dataSource;
-				this.setShowTotal(false);
-				break;
-			case 'monto':
-				data = this.state.dataSource;
-				this.setShowTotal(true);
-				break;
-			case 'total':
-				data = this.state.dataSource;
-				this.setShowTotal(true);
-				break;
-		}
-		return data;
-	}
 
-  //Obtiene el total a mostrar de la deuda que está al final de la lista de clientes
-  //Por el momento no actualiza un valor dinámico
-	getTotal(){
-		return <Text style={styles.totalNumber}>$500</Text> 
-	}
 
-  //Muestra el total de la deuda actualizada
-	showTotal(){
-		if(showTotal)
-			return <Text style={styles.totalText}>Total:  {this.getTotal()}</Text>
-	}
 	render(){
 		return(	
 			<View style={{flex:1}}>
@@ -198,8 +187,8 @@ class ClientsList extends Component {
 		        	onRequestClose={() => {
 		        	  this.setState({ modalVisible: false })
 		        	}}>
-		        	<View 
-		        		
+		        	<KeyboardAvoidingView 
+		        		behavior="padding" enabled
 		        		style={styles.modalBackground}>
                 {/* Apartir de aquí en el View con estilo containerModal es el contenido */}
 		        		<View style={styles.containerModal}>
@@ -212,6 +201,20 @@ class ClientsList extends Component {
 			        			address={modalClient.address}
 			        			products={modalClient.history}
 			        		/>
+                  <View style={{ backgroundColor: 'white',   shadowColor: colores.azul.color,
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.5,}}>
+                  <FormLabel labelStyle={styles.inputLabelStyleModal}>Dinero abonado:</FormLabel>
+                  <TextInput
+                    style={styles.inputContainerStyleModal}
+                    value={this.state.abono}
+                    onChangeText={(abono) => this.setState({abono: abono})}
+                    returnKeyType={'done'}
+                  />
+                  <TouchableOpacity style={[styles.button, {backgroundColor: colores.azul.color, borderColor: colores.azul.color}]} onPress={this.ingresar}> 
+                    <Text style={[styles.buttonText, {color: 'white'}]}>Abonar</Text> 
+                  </TouchableOpacity>
+                  </View>
     		        		<View style={[styles.containerCloseModal, {position: 'absolute', top: 0, left:0, right:0}]}>
     			        		<TouchableOpacity
     			        			onPress={() => {
@@ -223,16 +226,15 @@ class ClientsList extends Component {
     			        		</TouchableOpacity>
     		        		</View>
 		        		</View>
-		        	</View>
+		        	</KeyboardAvoidingView>
 		        </Modal>
         {/* Lista de botones de vista previa */}
 				<FlatList
-			        data={this.state.dataSource}
+			        data={ this.state.fullClients}
 			        renderItem={({item}) => this.choseType(item)}
-			        keyExtractor={item => item.id}
+			        
+              keyExtractor={(item) => item.id}
 				/>
-        {/* Muesta el total al final de la lista dependiendo la pantalla que llame este componente */}
-				{this.showTotal()}
 
         {/* Logo de app al final del contenido mostrado en pantalla */}
 				<Image
@@ -270,20 +272,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flex: 1,
   },
-  totalText: {
-  	textAlign: 'right',
-  	color: colores.rosa.color,
-  	fontWeight: 'bold',
-  	fontSize: 17,
-  	marginRight: 20,
-  	margin: 15,
-    fontFamily: 'Poppins-Regular'
-  },
-  totalNumber:{
-  	color: colores.azul.color,
-  	fontWeight: 'normal',
-    fontFamily: 'Poppins-Regular'
-  },
   modalBackground: {
   	flex: 1,
   	backgroundColor: 'rgba(0, 0, 0, 0.3)'
@@ -317,10 +305,46 @@ const styles = StyleSheet.create({
   },
   photo: {
     width: 250,
-    bottom: -160,
+    bottom: -210,
     alignSelf: 'center',
     position: 'absolute',
-  }
+  },
+  button: {
+    borderRadius: 50,
+    borderWidth: 2,
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingTop: 5,
+    paddingBottom: 5,
+    marginRight: 50,
+    marginLeft: 50,
+    marginBottom: 20
+  },
+  buttonText: {
+    fontSize: 20,
+    color: 'black',
+    textAlign: 'center',
+  },
+  inputContainerStyleModal: {
+    alignSelf: 'center',
+    borderBottomWidth: 2,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
+    marginBottom: 20,
+    borderColor: colores.gris.color,
+    width: 200,
+    fontSize: 20,
+    color: 'black'
+  },
+  inputLabelStyleModal: {
+    color: colores.azul.color,
+    fontSize: 17,
+    fontWeight: 'normal', 
+    marginBottom: 10,
+    textAlign: 'center'
+  },
 });
 
 

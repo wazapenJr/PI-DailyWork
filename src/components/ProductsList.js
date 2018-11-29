@@ -6,6 +6,7 @@ import {Actions} from 'react-native-router-flux';
 import { getUser } from '../screens/SignInScreen';
 
 var servidor ='angel140496.ddns.net'
+//Regresa la lista completa de los productos obtenidos de la base de datos y los muestra con el diseño del ProductChartBox
 class ProductsList extends Component {
 	constructor(props){
 	  super(props);
@@ -60,9 +61,34 @@ class ProductsList extends Component {
 
     //Detecta qué producto fue seleccionado y te dirige a la pantalla de detalles del mismo, mandándole los props que ocupa la pantalla de detalles
 	handlePress(item){
-	  Actions.DetailProduct({product: item.name, photo: item.photo, price: item.price, description: item.description})
+	  Actions.DetailProduct({id_product: item.id, product: item.name, photo: item.photo, price: item.price, description: item.description, category: item.category})
 	}
-
+  addToChart(item) {
+    fetch('http://' + `${servidor}` + '/Pulgas/pulgasBackEnd/POST_carrito.php',
+    {
+      method: 'POST',
+      headers:
+      {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id_user: getUser().id,
+        name: item.name,
+        photo: item.photo,
+        price: item.price,
+      })
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        
+        console.log('Agregaste un producto de: ' + getUser().name)
+      }).catch((error) => {
+        console.error(error);
+      });
+  }
+  addProduct(item){
+    this.addToChart(item)
+  }
 	render(){
 
         //Si está cargando los datos muestra cargando y si no muestra la lista completa de estos.
@@ -78,7 +104,7 @@ class ProductsList extends Component {
                         data={this.filter()}
                         renderItem={({ item }) => (
                             <TouchableOpacity onPress={() => this.handlePress(item)} style={{flex: 1}}>
-                                <ProductBox photo={item.photo} price={item.price} name={item.name}/>
+                                <ProductBox addProduct={this.addProduct(item)} photo={item.photo} price={item.price} name={item.name}/>
                             </TouchableOpacity>
                         )}
                         keyExtractor={item => item.id}

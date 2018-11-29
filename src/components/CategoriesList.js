@@ -11,6 +11,8 @@ function getCategories(){
     return categories;
 }
 var categories;
+
+//Regresa la lista completa de las categorías obtenidas de la base de datos y las muestra con el diseño del CategorieBox
 class CategoriesList extends Component {
 	constructor(props){
 	  super(props);
@@ -41,6 +43,9 @@ class CategoriesList extends Component {
 	      console.error(error);
 	    });
 	}
+	componentWillReceiveProps() {
+	  this.insertaraBaseDeDatos();
+	}
 	//Actualiza las categorías cada que se muestra este componente
 	componentDidMount() {
 		this.insertaraBaseDeDatos();
@@ -49,7 +54,7 @@ class CategoriesList extends Component {
 	//Controla la categoría que fue presioanda y te manda a la pantalla de productos que contiene esa categoría
 	handlePress(item){
 	  //Abre la pantalla de productos mandándole las props de categoría y foto de la categoría presionada
-	  Actions.Products({categorie: item.title, photo: item.photo, refresh: true})
+	  Actions.Products({id: item.id, categorie: item.title, photo: item.photo})
 	}
 
 	render(){

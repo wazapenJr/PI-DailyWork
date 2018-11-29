@@ -46,6 +46,7 @@ export default class AddClientScreen extends Component<Props> {
       address: '', //Guarda la dirección del cliente creado
       email: '', //Guarda el email del cliente creado
       phone: '', //Guarda el teléfono del cliente creado
+      photo: ''
     }
   }
 
@@ -54,7 +55,7 @@ export default class AddClientScreen extends Component<Props> {
     const { address }  = this.state ;
     const { phone }  = this.state ;
     const { email }  = this.state ;
-    const photo = 'http';
+    const { photo } = this.state;
     fetch('http://' + `${servidor}` + '/Pulgas/pulgasBackEnd/POST_client.php',
     {
       method: 'POST',
@@ -83,9 +84,16 @@ export default class AddClientScreen extends Component<Props> {
     this.insertaraBaseDeDatos();
 
     //Cierra pantalla actual
-    Actions.pop({refresh: true});
+    setTimeout(()=> {Actions.refresh({refresh: true})}, 500); Actions.pop();
   }
 
+  sourcePhoto(){
+    var photo = this.state.photo;
+    if(photo == '')
+      return photo = 'http';
+    else
+      return photo;
+  }
   render() {
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
@@ -95,16 +103,22 @@ export default class AddClientScreen extends Component<Props> {
         </View>
         <Image
           style={styles.profilePhoto}
-          source={this.props.photo}
+          source={{uri: this.sourcePhoto()}}
           resizeMode='contain'
         />
-        <TouchableOpacity style={[styles.button, {borderColor: colores.azul.color, width: 250, marginTop: 10, marginBottom: 10}]} onPress={this.onPress} > 
-          <Text style={[styles.buttonText, {color: colores.azul.color}]}>Seleccionar un avatar</Text> 
-        </TouchableOpacity>
+        <FormLabel labelStyle={styles.inputLabelStyleModal}>Agrega el link de tu foto:</FormLabel>
+        <TextInput
+          style={styles.inputContainerStyleModal}
+          value={this.state.photo}
+          onSubmitEditing={() => { this.nombre.focus(); }}
+          onChangeText={(photo) => this.setState({photo: photo})}
+          returnKeyType={'next'}
+        />
         <FormLabel labelStyle={styles.inputLabelStyleModal}>Nombre:</FormLabel>
         <TextInput
           style={styles.inputContainerStyleModal}
           value={this.state.nombre}
+          ref={(input) => { this.nombre = input; }}
           onSubmitEditing={() => { this.address.focus(); }}
           onChangeText={(nombre) => this.setState({nombre: nombre})}
           returnKeyType={'next'}

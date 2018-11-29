@@ -4,6 +4,7 @@ import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elemen
 import RadioForm from 'react-native-simple-radio-button';
 import {Actions} from 'react-native-router-flux';
 import { getCategories } from '../components/CategoriesList';
+import { getUser } from './SignInScreen';
 
 const colores = {
   azul: {
@@ -27,6 +28,9 @@ const colores = {
 type Props = {};
 var categories;
 var servidor ='angel140496.ddns.net';
+/*
+ * Esta pantalla muestra los detalles completos del producto seleccionado y nos permite editar estos detalles.
+ */
 export default class EditProductScreen extends Component<Props> {
   constructor(props){
     super(props);
@@ -42,25 +46,24 @@ export default class EditProductScreen extends Component<Props> {
           label: 'Femenino', value: 'F'
         }
       ],
-      nombre: this.props.name, //Guarda el nombre del producto creado
-      price: this.props.price, //Guarda el precio del producto creado
-      description: this.props.description, //Guarda la dirección del producto creado
-      category: this.props.category,
-      photo: this.props.photo
+      id: this.props.id_producto, //Guarda el ID...
+      nombre: this.props.nameProduct, //Guarda el nombre del producto editado
+      price: this.props.price, //Guarda el precio del producto editado
+      description: this.props.description, //Guarda la dirección del producto editado
+      category: this.props.category, //Guarda la categoría del producto editado
+      photo: this.props.photo //Guarda la foto ...
     }
   }
-  componentDidMount() {
-    categories = getCategories();
-    console.log('Categorias: ' + categories)
-  }
 
+  //Actualiza los datos del producto, estos se definen en las constantes mostradas abajo.
   insertaraBaseDeDatos() {
+    const { id }  = this.state ;
     const { nombre }  = this.state ;
     const { price }  = this.state ;
     const { description }  = this.state ;
     const { category }  = this.state ;
     const { photo } = this.state;
-    fetch('http://' + `${servidor}` + '/Pulgas/pulgasBackEnd/POST_product.php',
+    fetch('http://' + `${servidor}` + '/Pulgas/pulgasBackEnd/UPDATE_producto.php',
     {
       method: 'POST',
       headers:
@@ -69,6 +72,7 @@ export default class EditProductScreen extends Component<Props> {
        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        id: id,
         name: nombre,
         price: price,
         description: description,
@@ -83,19 +87,23 @@ export default class EditProductScreen extends Component<Props> {
       });
   }
   onPress = () => {
-    //Agregar nuevo producto
+    //Edita el producto
     this.insertaraBaseDeDatos();
 
-    //Cierra pantalla actual
+    //Cierra pantalla actual y regresa a la anterior
     Actions.pop();
   }
 
-/*  showCategories(){
-    for(var i = 0; i < categories.length; i++){
-      return <Picker.Item value={categories[i].title} label={categories[i].title} />
-      console.log(categories[i].title)
-    }
-  }*/
+  /* Se encarga de guardar el link de la foto para el producto, en caso de dejar vació el TextInput de la foto,
+   * el valor de la foto cambia a 'http' para que no intente buscar un link inexistente
+   */
+  sourcePhoto(){
+    var photo = this.state.photo;
+    if(photo == '')
+      return photo = 'http';
+    else
+      return photo;
+  }
   render() {
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
@@ -105,17 +113,23 @@ export default class EditProductScreen extends Component<Props> {
         </View>
         <Image
           style={styles.profilePhoto}
-          source={this.state.photo}
+          source={{uri: this.sourcePhoto()}}
           resizeMode='contain'
         />
-        <TouchableOpacity style={[styles.button, {borderColor: colores.azul.color, width: 250, marginTop: 10, marginBottom: 10}]} onPress={this.onPress} > 
-          <Text style={[styles.buttonText, {color: colores.azul.color}]}>Editar imagen</Text> 
-        </TouchableOpacity>
+        <FormLabel labelStyle={styles.inputLabelStyleModal}>Agrega el link de tu foto:</FormLabel>
+        <TextInput
+          style={styles.inputContainerStyleModal}
+          value={this.state.photo}
+          onSubmitEditing={() => { this.name.focus(); }}
+          onChangeText={(photo) => this.setState({photo: photo})}
+          returnKeyType={'next'}
+        />
         <FormLabel labelStyle={styles.inputLabelStyleModal}>Nombre:</FormLabel>
         <TextInput
           style={styles.inputContainerStyleModal}
           value={this.state.nombre}
-          onSubmitEditing={() => { this.price.focus(); }}
+          ref={() => { this.name.focus(); }}
+          onSubmitEditing={() => { this.description.focus(); }}
           onChangeText={(nombre) => this.setState({nombre: nombre})}
           returnKeyType={'next'}
         />
@@ -123,36 +137,33 @@ export default class EditProductScreen extends Component<Props> {
         <TextInput
           multiline
           style={[styles.inputContainerStyleModal, {borderWidth: 2, borderRadius: 8, height: 200}]}
-          value={this.state.price}
-          ref={(input) => { this.price = input; }}
-          onSubmitEditing={() => { this.description.focus(); }}
-          onChangeText={(price) => this.setState({price: price})}
+          value={this.state.description}
+          ref={(input) => { this.description = input; }}
+          onSubmitEditing={() => { this.price.focus(); }}
+          onChangeText={(description) => this.setState({description: description})}
           returnKeyType={'next'}
         />
         <FormLabel labelStyle={styles.inputLabelStyleModal}>Precio:</FormLabel>
         <TextInput
           style={styles.inputContainerStyleModal}
-          value={this.state.description}
-          ref={(input) => { this.description = input; }}
-          onSubmitEditing={() => { this.category.focus(); }}
-          onChangeText={(description) => this.setState({description: description})}
-          returnKeyType={'next'}
-        />
-        <FormLabel labelStyle={styles.inputLabelStyleModal}>Cateogría:</FormLabel>
-        <TextInput
-          style={styles.inputContainerStyleModal}
-          value={this.state.category}
-          ref={(input) => { this.category = input; }}
-          onChangeText={(category) => this.setState({category: category})}
+          value={this.state.price}
+          ref={(input) => { this.price = input; }}
+          
+          onChangeText={(price) => this.setState({price: price})}
           returnKeyType={'done'}
         />
-{/*        <Picker
+        <FormLabel labelStyle={[styles.inputLabelStyleModal, {marginBottom: 0}]}>Cateogría:</FormLabel>
+        <Picker
           itemStyle={{fontSize: 20, color: colores.azul.color}}
-          style={{width: 100, borderColor: '#3DE69C', borderWidth: 0, borderRadius: 8}}
+          style={{ borderColor: '#3DE69C', borderWidth: 0, borderRadius: 8}}
           selectedValue={this.state.category}
           onValueChange={(itemValue, itemIndex) => this.setState({category: itemValue})}>
-          {this.showCategories};
-        </Picker>*/}
+          {    
+            getCategories().map((category, index) => (
+              <Picker.Item key={index} label={category.title} value={category.title} />
+            ))
+          }
+        </Picker>
           <TouchableOpacity style={[styles.button, {borderColor: colores.azul.color}]} onPress={this.onPress} > 
             <Text style={[styles.buttonText, {color: colores.azul.color}]}>Guardar</Text> 
           </TouchableOpacity>

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
+//Regresa una tarjeta estilizada con la vista previa del cliente
 const ReviewClient = (props) => {
 	const {container, photo, containerDetailText, containerDetail, textTitle, textSubtitle, arrow} = styles; 
 	return (

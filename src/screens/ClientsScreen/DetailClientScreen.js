@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import { StyleSheet, ScrollView, Image, FlatList, Text, View } from 'react-native';
+import { StyleSheet, ScrollView, Image, TouchableOpacity, FlatList, Text, View } from 'react-native';
 import ReviewClient from '../../components/ReviewClient';
+import {Actions} from 'react-native-router-flux';
 
 const colores = {
   azul: {
@@ -22,21 +23,28 @@ const colores = {
 }
 
 type Props = {};
+//Muestra los detalles del cliente seleccionado
 export default class DetailClientScreen extends Component<Props> {
     constructor(props){
       super(props);
       this.state = {
         //Guarda el historial de productos que contiene el cliente que se detalla en esta pantalla
-        dataSource: this.props.history
+        dataSource: [{"id_history":"3","name_history":"Lenovo","price":"999","paid":"0","photo_history":"http://angel140496.ddns.net/Pulgas/images/Andrea.jpeg","email_user":"jtorres24@ucol.mx"},{"id_history":"4","name_history":"hola","price":"230","paid":"0","photo_history":"http://angel140496.ddns.net/Pulgas/images/chest.png","email_user":"jtorres24@ucol.mx"}],
       };
     }
-  
+  /*componentDidMount() {
+    var history = []
+    history.push(this.props.history)
+    this.setState({dataSource: history})
+    console.log(this.state.dataSource.name_history)
+  }*/
   render() {
     var pagosPendientes = this.state.dataSource.length;
-    for(var i = 0; i < this.state.dataSource.length; i++){
-      if(this.state.dataSource[i].paid == 1)
+    for(var i = 0; i < this.state.dataSource.length; i++){ //Obtiene los productos y resta los que ya han sido pagados
+      if(this.state.dataSource.paid == 1)
         pagosPendientes--;
     }
+    
     return (
         <ScrollView style={{backgroundColor: 'white'}} >
       <View style={styles.container}>
@@ -63,6 +71,7 @@ export default class DetailClientScreen extends Component<Props> {
 
             <Text style={[styles.addText,{marginBottom:5, color: colores.azul.color}]}>Historial:</Text>
           </View>
+          {/* Muestra la lista completa de los productos en el historial de clientes */}
           <View style={styles.add}>
             <FlatList
               data={this.state.dataSource}
@@ -81,6 +90,37 @@ export default class DetailClientScreen extends Component<Props> {
               keyExtractor={item => item.id_history}
             />
             <View style={{height: 20}}/>
+          </View>
+          <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}} >
+            <TouchableOpacity
+              onPress={() => {Actions.EditClient(
+                {
+                  id: `${this.props.id}`,
+                  nameClient: `${this.props.nameClient}`,
+                  address: `${this.props.address}`,
+                  photo: `${this.props.photo}`,
+                  email: `${this.props.email}`,
+                  phone: `${this.props.phone}`,
+                }
+              )}}
+              style={[styles.containerButton, {marginRight: 15}]}
+            >
+              <Image
+                style={styles.button}
+                source={require('../../assets/icons/edit.png')}
+                resizeMode='contain'
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {Actions.EditProduct()}}
+              style={styles.containerButton}
+            >
+              <Image
+                style={styles.button}
+                source={require('../../assets/icons/delete.png')}
+                resizeMode='contain'
+              />
+            </TouchableOpacity>
           </View>
       </View>
         </ScrollView>
@@ -175,5 +215,14 @@ const styles = {
     borderRadius: 30,
     //borderColor: 'red',
     //borderWidth: 1,
+  },
+  containerButton:{
+    shadowColor: colores.naranja.color,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3, 
+  },
+  button: {
+    width: 30,
+    height: 30,
   },
 }

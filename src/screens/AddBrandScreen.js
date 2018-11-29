@@ -42,11 +42,14 @@ export default class AddBrandScreen extends Component<Props> {
           label: 'Femenino', value: 'F'
         }
       ],
-
-      photo: 'http://' + `${servidor}` + '/Pulgas/images/pcFixed.jpg', //Guarda la imagen de la categoría creada
+      image: null,
+      uploading: false,
+      photo: '', //Guarda la imagen de la categoría creada
       name: '', //Guarda el nombre de la categoría creada
     }
   }
+
+
 
   insertaraBaseDeDatos() {
     const { name }  = this.state ;
@@ -76,8 +79,15 @@ export default class AddBrandScreen extends Component<Props> {
     this.insertaraBaseDeDatos();
 
     //Cierra pantalla actual
-    Actions.pop();
-    Actions.Categories({refresh: true});
+    setTimeout(()=> {Actions.refresh({refresh: true})}, 500); Actions.pop();
+  }
+
+  sourcePhoto(){
+    var photo = this.state.photo;
+    if(photo == '')
+      return photo = 'http';
+    else
+      return photo;
   }
 
   render() {
@@ -88,11 +98,16 @@ export default class AddBrandScreen extends Component<Props> {
           <Text style={styles.welcome}>Agregar categoría</Text> 
         </View>
       {/* Componente que muestra la vsita previa de cómo quedaría la categoría creada */}
-        <CategorieBox photo={this.state.photo} title={this.state.name}/>
+        <CategorieBox photo={this.sourcePhoto()} title={this.state.name}/>
 
-        <TouchableOpacity style={[styles.button, {borderColor: colores.azul.color, marginTop: 10, marginBottom: 10}]} onPress={this.onPress} > 
-          <Text style={[styles.buttonText, {color: colores.azul.color}]}>Agregar imagen</Text> 
-        </TouchableOpacity>
+        <FormLabel labelStyle={styles.inputLabelStyleModal}>Agrega el link de tu foto:</FormLabel>
+        <TextInput
+          style={styles.inputContainerStyleModal}
+          value={this.state.photo}
+          onSubmitEditing={() => { this.name.focus(); }}
+          onChangeText={(photo) => this.setState({photo: photo})}
+          returnKeyType={'next'}
+        />
         <FormLabel labelStyle={styles.inputLabelStyleModal}>Nombre:</FormLabel>
         <TextInput
           style={styles.inputContainerStyleModal}

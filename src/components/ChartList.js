@@ -4,6 +4,7 @@ import { Text, FlatList, ListView, View, Image, TouchableOpacity, StyleSheet } f
 import ProductChartBox from './ProductChartBox';
 import {Actions} from 'react-native-router-flux';
 
+//Regresa la lista completa de los productos en el carrito obtenidos de la base de datos y los muestra con el diseño del ProductChartBox
 class ChartList extends Component {
 	constructor(props){
 	  super(props);
@@ -26,7 +27,7 @@ class ChartList extends Component {
 		        data={this.state.dataSource}
 		        renderItem={({ item }) => (
 		        	<View>
-		          		<ProductChartBox photo={item.photo} title={item.name}/>
+		          		<ProductChartBox photo={item.photo} name={item.name} price={item.price} cantidad={1} delete={require('../assets/icons/delete.png')} />
 		          	</View>
 		        )}
 		        keyExtractor={item => item.id}

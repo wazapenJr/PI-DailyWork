@@ -61,6 +61,10 @@ export default class ProductsScreen extends Component<Props> {
       ],
     }
   }
+
+  componentWillReceiveProps() {
+    console.log('hola mundo');
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -75,32 +79,32 @@ export default class ProductsScreen extends Component<Props> {
               source={{uri: this.props.photo}}
               resizeMode='cover'
             />
-            <LinearGradient style={[styles.imageContainer, {bottom: 0, top: -10, left: -10, right: -10}]} colors={['rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.8)', 'rgba(255, 255, 255, 1)']} />
+            <LinearGradient style={[styles.imageContainer, {bottom: 0, top: -10, left: -10, right: -10}]} colors={['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0.7)', 'rgba(255, 255, 255, 0.8)', 'rgba(255, 255, 255, 1)']} />
             <View style={styles.titleContainer} >
               <Text style={styles.welcome}>{this.props.categorie}</Text> 
               <TouchableOpacity
-                onPress={() => {this.chart(this.state.chart)}}
+                onPress={() => {Actions.EditBrand({id:`${this.props.id}`, photo: `${this.props.photo}`, nameCategory: `${this.props.categorie}`})}}
                 style={styles.containerButton}
               >
                 <Image
                   style={styles.button}
-                  source={require('../../assets/icons/carrito.png')}
+                  source={require('../../assets/icons/edit.png')}
                   resizeMode='contain'
                 />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => {this.chart(this.state.chart)}}
+                onPress={() => {Actions.EditBrand()}}
                 style={styles.containerButton}
               >
                 <Image
                   style={styles.button}
-                  source={require('../../assets/icons/carrito.png')}
+                  source={require('../../assets/icons/delete.png')}
                   resizeMode='contain'
                 />
               </TouchableOpacity>
             </View>
           </View>
-          <ProductsList refresh={this.props.refresh} category={this.props.categorie}/>
+          <ProductsList category={this.props.categorie}/>
           <View style={{height: 60}} />
         </ScrollView>
         <View style={{position: 'absolute', bottom: 0, left:0, right:0}}>
@@ -156,9 +160,6 @@ const styles = StyleSheet.create({
   containerButton:{
     marginTop: 40,
     marginLeft: 20,
-    shadowColor:'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
   },
   button: {
     width: 30,

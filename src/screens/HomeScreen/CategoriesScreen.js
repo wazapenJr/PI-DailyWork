@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar } from 
 import Footer from '../../components/Footer';
 import CategoriesList from '../../components/CategoriesList';
 import {Actions} from 'react-native-router-flux';
+import { getUser } from '../SignInScreen';
 
 const colores = {
   azul: {
@@ -24,6 +25,7 @@ const colores = {
   },
 }
 
+var servidor ='angel140496.ddns.net'
 type Props = {};
 export default class CategoriesScreen extends Component<Props> {
   constructor(props){
@@ -64,15 +66,31 @@ export default class CategoriesScreen extends Component<Props> {
     }
   }
 
-  startRefresh() {
-    if(this.state.refresh){
-      return(<CategoriesList />);
-      this.setState({refresh: false})
-    }else{
-      return(<CategoriesList />);
-      this.setState({refresh: false})
-    }
+  //Obtiene el carrito para mostrarlo en la ventana carrito
+  insertaraBaseDeDatos() {
+    fetch('http://' + `${servidor}` + '/Pulgas/pulgasBackEnd/GET_carrito.php',
+    {
+      method: 'POST',
+      headers:
+      {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id_user: getUser().id
+      })
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({carrito: responseJson, isLoading: false, refresh: false});
+        console.log('Obuste los productos de: ' + getUser().name)
+      }).catch((error) => {
+        console.error(error);
+      });
   }
+  componentDidMount() {
+    this.insertaraBaseDeDatos();
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -83,7 +101,7 @@ export default class CategoriesScreen extends Component<Props> {
           <View style={styles.containerContent}> 
               <Text style={styles.welcome}>Categorías</Text> 
           </View>
-          {this.startRefresh()}
+          <CategoriesList />
           <View style={{height: 60}} />
         </ScrollView>
         <View style={{position: 'absolute', bottom: 0, left:0, right:0}}>

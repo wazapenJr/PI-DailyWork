@@ -23,8 +23,18 @@ const colores = {
   },
 }
 
+//Muestra en pantalla la lista de deudores del día de hoy
 type Props = {};
 export default class TodayBillsScreen extends Component<Props> {
+  //Obtiene el total a mostrar de la deuda que está al final de la lista de clientes
+  //Por el momento no actualiza un valor dinámico
+  getTotal(){
+    return <Text style={styles.totalNumber}>$500</Text> 
+  }
+  showTotal(show){
+    if(show)
+      return <Text style={styles.totalText}>Total:  {this.getTotal()}</Text>
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -36,7 +46,8 @@ export default class TodayBillsScreen extends Component<Props> {
             <Text style={styles.welcome}>Cobros para hoy</Text> 
           </View>
           {/* Componente que muestra la lista de clientes deudores hoy */}
-          <ClientsList refresh={'refresh'} type={'total'}/>
+          <ClientsList showTotal={true} type={'total'}/>
+          {this.showTotal(true)}
           <View style={{height: 50}}/> 
         </ScrollView>
       </View>
@@ -62,5 +73,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     color: colores.naranja.color,
     textAlign: 'center',
+  },
+  totalText: {
+    textAlign: 'right',
+    color: colores.rosa.color,
+    fontWeight: 'bold',
+    fontSize: 17,
+    marginRight: 20,
+    margin: 15,
+    fontFamily: 'Poppins-Regular'
+  },
+  totalNumber:{
+    color: colores.azul.color,
+    fontWeight: 'normal',
+    fontFamily: 'Poppins-Regular'
   },
 });

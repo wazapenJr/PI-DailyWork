@@ -4,6 +4,7 @@ import { Text, View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import ContentModal from './ContentModal';
 import SearchInput from './SearchInput';
 
+//Distribuye y estructura la información del producto mostrándo una vista previa del mismo, este comoponente define los estilos para mostrar la review de cada producto
 class ProductBox extends Component {
 	constructor(props){
 	  super(props);
@@ -33,7 +34,7 @@ class ProductBox extends Component {
 						</View>
 						<Text style={[styles.subtitle, {textAlign: 'right'}]}>${this.props.price}</Text>
 					</View>
-					<TouchableOpacity style={[styles.textContainer, {height: 30, flex: 0}]}>
+					<TouchableOpacity onPress={this.props.addProduct} style={[styles.textContainer, {height: 30, flex: 0}]}>
 						<Text style={[styles.title, {textAlign: 'left'}]}>Agregar</Text>
 						<Text style={[styles.title, {width: 30, textAlign: 'right', color: colores.gris.color}]}>[ 51 ]</Text>
 					</TouchableOpacity>

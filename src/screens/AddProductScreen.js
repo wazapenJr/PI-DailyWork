@@ -48,7 +48,7 @@ export default class AddProductScreen extends Component<Props> {
       description: '', //Guarda la dirección del producto creado
       category: '',
       categories: '',
-      photo: 'http'
+      photo: ''
     }
   }
   
@@ -90,6 +90,14 @@ export default class AddProductScreen extends Component<Props> {
     Actions.pop();
   }
 
+  sourcePhoto(){
+    var photo = this.state.photo;
+    if(photo == '')
+      return photo = 'http';
+    else
+      return photo;
+  }
+
   render() {
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
@@ -99,16 +107,22 @@ export default class AddProductScreen extends Component<Props> {
         </View>
         <Image
           style={styles.profilePhoto}
-          source={this.props.photo}
+          source={{uri: this.sourcePhoto()}}
           resizeMode='contain'
         />
-        <TouchableOpacity style={[styles.button, {borderColor: colores.azul.color, width: 250, marginTop: 10, marginBottom: 10}]} onPress={this.onPress} > 
-          <Text style={[styles.buttonText, {color: colores.azul.color}]}>Agregar imagen</Text> 
-        </TouchableOpacity>
+        <FormLabel labelStyle={styles.inputLabelStyleModal}>Agrega el link de tu foto:</FormLabel>
+        <TextInput
+          style={styles.inputContainerStyleModal}
+          value={this.state.photo}
+          onSubmitEditing={() => { this.nombre.focus(); }}
+          onChangeText={(photo) => this.setState({photo: photo})}
+          returnKeyType={'next'}
+        />
         <FormLabel labelStyle={styles.inputLabelStyleModal}>Nombre:</FormLabel>
         <TextInput
           style={styles.inputContainerStyleModal}
           value={this.state.nombre}
+          ref={(input) => { this.nombre = input; }}
           onSubmitEditing={() => { this.description.focus(); }}
           onChangeText={(nombre) => this.setState({nombre: nombre})}
           returnKeyType={'next'}

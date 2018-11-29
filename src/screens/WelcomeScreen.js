@@ -32,18 +32,18 @@ export default class WelcomeScreen extends Component<Props> {
           resizeMode='contain'
         />
         <View>
+        <View style={[styles.button, {borderColor: colores.azul.color, borderWidth: 0, borderRightWidth: 2}]}> 
+          <Text style={[styles.buttonText, {color: colores.azul.color}]}>¡Comencemos hoy! :D</Text>
+        </View>
         <TouchableOpacity style={[styles.button, {borderColor: colores.rosa.color}]} onPress={() => Actions.SignUp()}> 
-          <Text style={[styles.buttonText, {color: colores.rosa.color}]}>Sign up with email</Text> 
+          <Text style={[styles.buttonText, {color: colores.rosa.color}]}>Registrarse</Text> 
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.button, {borderColor: colores.azul.color}]} onPress={() => Actions.SignUp()}> 
-          <Text style={[styles.buttonText, {color: colores.azul.color}]}>Sign up with Facebook</Text>
-        </TouchableOpacity>
 
-        <Text style={[styles.buttonText, {marginBottom: 10, marginTop: 20, color: colores.naranja.color}]}>Already have an account?</Text> 
+        <Text style={[styles.buttonText, {marginBottom: 10, marginTop: 20, color: colores.naranja.color}]}>¿Ya tienes una cuenta?</Text> 
 
         <TouchableOpacity style={[styles.button, {borderColor: colores.naranja.color}]} onPress={() => Actions.SignIn()}> 
-          <Text style={[styles.buttonText, {color: colores.naranja.color}]}>Sign In</Text> 
+          <Text style={[styles.buttonText, {color: colores.naranja.color}]}>Iniciar sesión</Text> 
         </TouchableOpacity>
         </View>
       </View>

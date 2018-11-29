@@ -30,14 +30,8 @@ import ListClientsScreen from './src/screens/ClientsScreen/ListClientsScreen';
 import DetailClientScreen from './src/screens/ClientsScreen/DetailClientScreen';
 
 import ListBillsScreen from './src/screens/ReportsScreen/ListBillsScreen';
-//import DetailBillScreen from './src/screens/ReportsScreen/DetailBillScreen';
-//OR
-//import DetailClientScreen from './src/screens/ReportsScreen/Screen';
 
 import TodayBillsScreen from './src/screens/TodayBillsScreen/TodayBillsScreen';
-//import DetailBillScreen from './src/screens/TodayBillsScreen/DetailBillScreen';
-//OR
-//import DetailClientScreen from './src/screens/TodayBillsScreen/Screen';
 
 //Objeto con todos los iconos seleccionados
 const focusedIcons = {
@@ -114,11 +108,11 @@ const scenes = Actions.create(
 
     <Scene key="AddProduct" navTransparent component={AddProductScreen}/>
 
-    <Scene key="EditBrand" navTransparent component={EditProductScreen}/>
+    <Scene key="EditBrand" navTransparent component={EditBrandScreen}/>
 
     <Scene key="AddBrand" navTransparent component={AddBrandScreen}/>
 
-    <Scene key="tabbar"  tabs labelStyle={{fontSize: 17}} inactiveTintColor={'#C0C0C0'} activeTintColor={colores.azul.color}
+    <Scene key="tabbar" tabs labelStyle={{fontSize: 17}} inactiveTintColor={'#C0C0C0'} activeTintColor={colores.azul.color}
       tabBarStyle={
         {
           backgroundColor: 'white',
@@ -154,6 +148,13 @@ const scenes = Actions.create(
 
 type Props = {};
 export default class App extends Component<Props> {
+  constructor(props){
+    super(props);
+    this.state = {
+      loading: true,
+      fontLoad: false
+    }
+  }
   async componentWillMount() {
     await Font.loadAsync({
       'Poppins-Regular': require('./src/assets/fonts/Poppins-Regular.ttf'),
@@ -162,9 +163,10 @@ export default class App extends Component<Props> {
     this.setState({fontLoad: true, loading: false});
   }
   render() {
-    return (
-      <Router scenes={scenes}/>
-    );
+    if(this.state.loading)
+      return <Text>cargando</Text>
+    else
+      return <Router scenes={scenes}/>
   }
 } 
 

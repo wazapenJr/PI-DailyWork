@@ -4,6 +4,7 @@ import { Text, View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import ContentModal from './ContentModal';
 import SearchInput from './SearchInput';
 
+//Es un componente que estructura la información y detalles a mostrar de la categoría, aquí se definen los estilos de la vista de una categoría.
 class CategorieBox extends Component {
 	constructor(props){
 	  super(props);
@@ -12,6 +13,7 @@ class CategorieBox extends Component {
 	  }
 	}
 
+	//Carga las fuentes de manera al momento de ser montado el componente
 	componentDidMount() {
 	  Font.loadAsync({
 	  	'Poppins-Regular': require('../assets/fonts/Poppins-Regular.ttf'),

@@ -21,6 +21,7 @@ const colores = {
   },
 }
 
+//Este no hace nada, no existe
 type Props = {};
 export default class ReportsScreen extends Component<Props> {
   render() {

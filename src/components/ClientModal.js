@@ -3,6 +3,7 @@ import { ScrollView, View, Text, Image, TouchableOpacity, TextInput, FlatList} f
 import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
 import ReviewClient from './ReviewClient';
 
+//Regresa el contenido del modal del cliente
 const ClientModal = (props) => {
 	return (
 			<View style={styles.container}>
@@ -23,6 +24,7 @@ const ClientModal = (props) => {
 	  		    	<Text style={[styles.addText,{marginBottom:5}]}>Teléfono:</Text>
 	  		    	<Text style={[styles.addText,{color: 'black'}]}>{props.phone}</Text>
 
+	  		    	{/*Muestra solo los productos que no se han pagado en la sección de Adeudos*/}
 	  		    	<Text style={[styles.addText,{marginBottom:5}]}>Adeudos:</Text>
   		    		<FlatList
   		    	        data={props.products}

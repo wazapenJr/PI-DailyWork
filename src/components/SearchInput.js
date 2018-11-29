@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 
+//Es el componente de búsqueda ubicado en el header
 const SearchInput = (props) => {
 	return (
 		<View style={styles.container}>

@@ -21,12 +21,12 @@ show = (header) => {
 		  		 <View style={{height: 15}}/>
 		  		    <Image
 		  		    	style={styles.profilePhoto}
-		  		    	source={props.photo}
+		  		    	source={{uri: props.photo}}
 		  		    	resizeMode='contain'
 		  		    />
 		  		    <Text style={styles.welcomeText}>¡Te damos la bienvenida {props.profileName}!</Text>
 		  			{/* Al presionarse oculta el header correspondiente y te manda a la pantalla de editar perfil que recibe ciertos datos ya definidos */}
-		  		    <TouchableOpacity onPress={() => {this.show(props.header), Actions.EditProfile({photo: props.photo, profileName: props.fullName})}}>
+		  		    <TouchableOpacity onPress={() => {this.show(props.header), Actions.EditProfile({id: props.id, username: props.username, photo: props.photo, profileName: props.fullName, email: props.email, pwd: props.pwd})}}>
 		  		    	<Text style={styles.editText}>Editar perfil</Text>
 		  		    </TouchableOpacity>
 		  		</View>

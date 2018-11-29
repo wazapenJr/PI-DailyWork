@@ -67,7 +67,10 @@ class HeaderBack extends Component {
 				    resizeMode='contain'
 				  />
 				</TouchableOpacity>
-				<SearchInput placeHolderText={'Search'}/>
+				<View style={[styles.buttonContainer, {borderColor: colores.rosa.color, borderTopWidth: 0, borderBottomWidth: 0}]}> 
+				  <Text style={[styles.buttonText, {color: colores.rosa.color}]}>¡Ten un buen día! :D</Text>
+				</View>
+				{/*<SearchInput placeHolderText={'Search'}/>*/}
 			</View>
 		);
 	}
@@ -111,14 +114,13 @@ const styles = StyleSheet.create({
 	},
 	button:{
 	    width: 45,
-	    height: 45,
-		//marginLeft: 20,
+	    height: 45,		
 		//marginRight: 20
 	},
 	back:{
 	    width: 22,
 	    height: 22,
-	    marginRight: 10,
+	    marginRight: 0,
 	    marginLeft: 0,
 
 		//marginLeft: 20,
@@ -153,7 +155,20 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderColor: colores.rosa.color,
 		alignItems: 'center',
-	}
+	},
+	buttonContainer: {
+	  borderRadius: 50,
+	  borderWidth: 2,
+	  paddingLeft: 30,
+	  paddingRight: 30,
+	  paddingTop: 5,
+	  paddingBottom: 5,
+	},
+	buttonText: {
+	  fontSize: 20,
+	  color: 'black',
+	  textAlign: 'center',
+	},
 });
 
 export default HeaderBack;

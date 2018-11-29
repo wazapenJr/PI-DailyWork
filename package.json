@@ -16,6 +16,7 @@
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.1.tar.gz",
     "react-native-elements": "^0.19.1",
+    "react-native-image-picker": "^0.27.1",
     "react-native-router-flux": "^4.0.6",
     "react-native-simple-radio-button": "^2.7.3",
     "react-native-touchable-scale": "^2.0.0",
@@ -27,6 +28,8 @@
     "jest-expo": "^31.0.0"
   },
   "rnpm": {
-    "assets": ["./src/assets/fonts/"]
+    "assets": [
+      "./src/assets/fonts/"
+    ]
   }
 }

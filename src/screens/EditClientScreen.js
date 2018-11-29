@@ -22,7 +22,9 @@ const colores = {
     color: '#F18537'
   },
 }
-
+/*
+ * Esta pantalla muestra los detalles completos del cliente seleccionado y nos permite editar estos detalles.
+ */
 type Props = {};
 var servidor ='angel140496.ddns.net'
 export default class AddClientScreen extends Component<Props> {
@@ -32,29 +34,23 @@ export default class AddClientScreen extends Component<Props> {
       user: '',
       email: '',
       pwd: '',
-      types: [
-        {
-          label: 'Masculino', value: 'M' 
-        },
-        {
-          label: 'Femenino', value: 'F'
-        }
-      ], //Guarda los tipos de generos para seleccionar en los radio buttons
-      genero: '', //Guarda el genero seleccionado del cliente creado
-      nombre: '', //Guarda el nombre del cliente creado
-      address: '', //Guarda la dirección del cliente creado
-      email: '', //Guarda el email del cliente creado
-      phone: '', //Guarda el teléfono del cliente creado
+      id: this.props.id,
+      photo: this.props.photo,
+      nombre: this.props.nameClient, //Guarda el nombre del cliente creado
+      address: this.props.address, //Guarda la dirección del cliente creado
+      email: this.props.email, //Guarda el email del cliente creado
+      phone: this.props.phone, //Guarda el teléfono del cliente creado
     }
   }
 
   insertaraBaseDeDatos() {
+    const { id }  = this.state ;
     const { nombre }  = this.state ;
     const { address }  = this.state ;
     const { phone }  = this.state ;
     const { email }  = this.state ;
     const photo = 'http';
-    fetch('http://' + `${servidor}` + '/Pulgas/pulgasBackEnd/POST_client.php',
+    fetch('http://' + `${servidor}` + '/Pulgas/pulgasBackEnd/UPDATE_client.php',
     {
       method: 'POST',
       headers:
@@ -63,6 +59,7 @@ export default class AddClientScreen extends Component<Props> {
        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        id: id,
         name: nombre,
         address: address,
         phone: phone,
@@ -81,28 +78,41 @@ export default class AddClientScreen extends Component<Props> {
     this.insertaraBaseDeDatos();
 
     //Cierra pantalla actual
-    Actions.pop({refresh: true});
+    Actions.pop();
   }
 
+  sourcePhoto(){
+    var photo = this.state.photo;
+    if(photo == '')
+      return photo = 'http';
+    else
+      return photo;
+  }
   render() {
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
       <ScrollView>
         <View style={styles.containerContent}> 
-          <Text style={styles.welcome}>Agregar cliente</Text> 
+          <Text style={styles.welcome}>Editar cliente</Text> 
         </View>
         <Image
           style={styles.profilePhoto}
-          source={this.props.photo}
+          source={{uri: this.sourcePhoto()}}
           resizeMode='contain'
         />
-        <TouchableOpacity style={[styles.button, {borderColor: colores.azul.color, width: 250, marginTop: 10, marginBottom: 10}]} onPress={this.onPress} > 
-          <Text style={[styles.buttonText, {color: colores.azul.color}]}>Seleccionar un avatar</Text> 
-        </TouchableOpacity>
+        <FormLabel labelStyle={styles.inputLabelStyleModal}>Agrega el link de tu foto:</FormLabel>
+        <TextInput
+          style={styles.inputContainerStyleModal}
+          value={this.state.photo}
+          onSubmitEditing={() => { this.name.focus(); }}
+          onChangeText={(photo) => this.setState({photo: photo})}
+          returnKeyType={'next'}
+        />
         <FormLabel labelStyle={styles.inputLabelStyleModal}>Nombre:</FormLabel>
         <TextInput
           style={styles.inputContainerStyleModal}
           value={this.state.nombre}
+          ref={(input) => { this.name = input; }}
           onSubmitEditing={() => { this.address.focus(); }}
           onChangeText={(nombre) => this.setState({nombre: nombre})}
           returnKeyType={'next'}

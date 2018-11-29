@@ -5,6 +5,7 @@ import ContentModal from './ContentModal';
 import SearchInput from './SearchInput';
 import {Actions} from 'react-native-router-flux';
 
+//Contiene el botón de carrito así como el degradado blanco detrás del mismo y lo acomoda fíjamente hasta abajo de la pantalla
 class Footer extends Component {
 	constructor(props){
 	  super(props);

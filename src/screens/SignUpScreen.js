@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Image, TextInput, Text, KeyboardAvoidingView, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, TextInput, Text, KeyboardAvoidingView, Alert, View, TouchableOpacity } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
 const colores = {
@@ -22,6 +22,8 @@ const colores = {
 }
 
 type Props = {};
+var servidor ='angel140496.ddns.net';
+var userLog;
 export default class SignUpScreen extends Component<Props> {
   constructor(props){
     super(props);
@@ -32,25 +34,61 @@ export default class SignUpScreen extends Component<Props> {
     }
   }
 
+  insertaraBaseDeDatos() {
+    const { user }  = this.state ;
+    const { email } = this.state;
+    const { pwd } = this.state;
+    fetch('http://' + `${servidor}` + '/Pulgas/pulgasBackEnd/POST_register.php',
+    {
+      method: 'POST',
+      headers:
+      {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: user,
+        email: email,
+        password: pwd
+      })
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        Alert.alert(responseJson);
+      }).catch((error) => {
+        console.error(error);
+      });
+  }
+  login() {
+    const { user }  = this.state ;
+    const { pwd } = this.state;
+    fetch('http://' + `${servidor}` + '/Pulgas/pulgasBackEnd/login.php',
+    {
+      method: 'POST',
+      headers:
+      {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: user,
+        password: pwd
+      })
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        if(responseJson == "error"){
+          Alert.alert('Usuario/contraseña no valido');  
+        }else{
+          userLog = responseJson;
+          console.log('Iniciaste :D ' + userLog[0].name)
+          Actions.Home();
+        }
+      }).catch((error) => {
+        Alert.alert('Error al iniciar seisón');
+      });
+  }
   ingresar = () => {
-    //Hace cosas bonitas para registrar un nuevo usuario luego inicia sesión si todo salió bien
-    /*
-    registrarse()...
-    */
-
-    //Hace cosas bonitas para iniciar sesión luego te manda a la pantalla home si todo salió bien
-    /*
-    iniciar...
-    getToken(this.state.user, this.state.pwd)
-    .then(data => {
-      global.token = data.token;
-      Actions.Home();
-    })
-    .catch(error => {
-      //Actions si hay un error en la respuesta
-      console.warn(error);
-    })*/
-    Actions.Home();
+    //this.insertaraBaseDeDatos();
+    Actions.pop()
   }
 
   render() {
@@ -89,10 +127,9 @@ export default class SignUpScreen extends Component<Props> {
           value={this.state.pwd}
           ref={(input) => { this.passwordTextInput = input; }}
           returnKeyType={'done'}
-          onSubmitEditing={this.ingresar}
         />
         <TouchableOpacity style={[styles.button, {borderColor: colores.rosa.color}]} onPress={this.ingresar}> 
-          <Text style={[styles.buttonText, {color: colores.rosa.color}]}>Sign up</Text> 
+          <Text style={[styles.buttonText, {color: colores.rosa.color}]}>Registrar</Text> 
         </TouchableOpacity>
       </KeyboardAvoidingView>
     );
